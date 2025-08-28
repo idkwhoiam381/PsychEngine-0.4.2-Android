@@ -16,5 +16,5 @@ haxelib install hxvlc 1.7.1 --quiet
 haxelib git hxcpp https://github.com/PsychExtendedThings/hxcpp --quiet
 haxelib git lime https://github.com/PsychExtendedThings/lime-new --quiet
 haxelib install openfl 9.3.3 --quiet
-haxelib git hxCodec https://github.com/PsychExtendedThings/hxCodec-0.6.3 --quiet
+haxelib git hxvlc https://github.com/MaybeMaru/hxvlc --quiet
 echo Finished!

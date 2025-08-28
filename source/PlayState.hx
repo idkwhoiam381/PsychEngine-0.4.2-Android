@@ -50,10 +50,6 @@ import StageData;
 import FunkinLua;
 import DialogueBoxPsych;
 
-#if VIDEOS_ALLOWED
-import vlc.MP4Handler;
-#end
-
 #if sys
 import sys.FileSystem;
 #end
@@ -1108,54 +1104,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public function startVideo(name:String):Void {
-		#if VIDEOS_ALLOWED
-		inCutscene = true;
 
-		var filepath:String = Paths.video(name);
-		#if sys
-		if(!FileSystem.exists(filepath))
-		#else
-		if(!OpenFlAssets.exists(filepath))
-		#end
-		{
-			FlxG.log.warn('Couldnt find video file: ' + name);
-			if(endingSong) {
-				endSong();
-			} else {
-				startCountdown();
-			}
-			return;
-		}
-
-		var video:MP4Handler = new MP4Handler();
-		#if (hxCodec < "3.0.0" && !ios)
-		video.playVideo(filepath);
-		video.finishCallback = function()
-		{
-			if(endingSong) {
-				endSong();
-			} else {
-				startCountdown();
-			}
-			return;
-		}
-		#else
-		video.play(filepath);
-		video.onEndReached.add(function(){
-			video.dispose();
-			startAndEnd();
-			return;
-		});
-		#end
-		#else
-		FlxG.log.warn('Platform not supported!');
-		if(endingSong) {
-			endSong();
-		} else {
-			startCountdown();
-		}
-		return;
-		#end
 	}
 
 	var dialogueCount:Int = 0;
@@ -1186,6 +1135,38 @@ class PlayState extends MusicBeatState
 				startCountdown();
 			}
 		}
+	}
+
+	public function startVideo(name:String)
+	{
+		#if VIDEOS_ALLOWED
+		inCutscene = true;
+
+		var filepath:String = Paths.video(name);
+		#if sys
+		if(!FileSystem.exists(filepath))
+		#else
+		if(!OpenFlAssets.exists(filepath))
+		#end
+		{
+			FlxG.log.warn('Couldnt find video file: ' + name);
+			startAndEnd();
+			return;
+		}
+
+		var video = new FlxVideo();
+		video.load(filepath);
+		video.onEndReached.add(()->{
+			video.dispose();
+			startAndEnd();
+			return;
+		},true);
+		video.play();
+		#else
+		FlxG.log.warn('Platform not supported!');
+		startAndEnd();
+		return;
+		#end
 	}
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void

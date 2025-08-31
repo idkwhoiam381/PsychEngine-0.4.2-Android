@@ -50,6 +50,12 @@ jobs:
           ndk-version: r27c
           add-to-path: false
 
+       - name: Cache Haxelib
+         uses: actions/cache@v3
+         with:
+           path: ~/.haxelib
+           key: ${{ runner.os }}-haxelib-${{ hashFiles('Project.xml') }}
+
       - name: Install Libraries
         run: ${{ inputs.setupCommand }}
 
